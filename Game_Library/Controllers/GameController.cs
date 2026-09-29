@@ -43,8 +43,8 @@ namespace Game_Library.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var game = await context.Games
-                .Include(d => d.Developer)
-                .FirstOrDefaultAsync(d => d.DeveloperId == id);
+                .Include(g => g.Developer)
+                .FirstOrDefaultAsync(g => g.Game_id == id);
 
             if (game == null)
             {
@@ -64,12 +64,18 @@ namespace Game_Library.Controllers
             return View(model);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Create()
         {
-            ViewBag.Hospitals = 
-            new SelectList(await context.Developers.Where(h => !h.IsDeleted).ToListAsync(),"Id","Name");
+            ViewBag.Developers = new SelectList(
+                await context.Developers
+                    .Where(d => !d.IsDeleted)
+                    .ToListAsync(),
+                "Developer_id",
+                "DeveloperName"
+            );
 
-            return View();
+            return View(new GameCreateViewModel());
         }
 
         [HttpPost]
@@ -94,7 +100,13 @@ namespace Game_Library.Controllers
             }
 
             ViewBag.Hospitals = new SelectList(
-            await context.Developers.Where(h => !h.IsDeleted).ToListAsync(),"Id","Name");
+            ViewBag.Developers = new SelectList(
+              await context.Developers
+             .Where(d => !d.IsDeleted)
+             .ToListAsync(),
+               "Developer_id",
+                 "DeveloperName"
+                 ));
 
             return View(model);
         }
@@ -119,7 +131,8 @@ namespace Game_Library.Controllers
             };
 
             ViewBag.Hospitals = new SelectList(
-            await context.Developers.Where(h => !h.IsDeleted).ToListAsync(),"Id","Name");
+            await context.Developers.Where(h => !h.IsDeleted).ToListAsync(), "Developer_id",
+                 "DeveloperName");
 
             return View(model);
         }
@@ -154,8 +167,8 @@ namespace Game_Library.Controllers
 
             ViewBag.Hospitals = new SelectList(
             await context.Developers.Where(h => !h.IsDeleted).ToListAsync(),
-                  "Id",
-                  "Name");
+                  "Developer_id",
+                 "DeveloperName");
 
             return View(model);
         }

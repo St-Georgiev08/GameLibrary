@@ -1,8 +1,8 @@
-﻿@model Game_Library.ViewModels.Developer.DeveloperEditViewModel
+﻿@model Game_Library.ViewModels.Developer.DeveloperDeleteViewModel
 
 <h1>Delete a developer</h1>
 
-<h3>Are you sure you want to delete the Developer - @Html.DisplayNameFor(model => model.DeveloperName)</h3>
+<h3>Are you sure you want to delete the Developer - @Html.DisplayNameFor(model => model.Id)</h3>
 
 <div>
 
@@ -11,10 +11,10 @@
     <dl>
 
         <dt>
-            @Html.DisplayNameFor(model => model.DeveloperName)
+            @Html.DisplayNameFor(model => model.Name)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.DeveloperName)
+            @Html.DisplayFor(model => model.Name)
         </dd>
 
 

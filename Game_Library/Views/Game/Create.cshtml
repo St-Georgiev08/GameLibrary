@@ -84,18 +84,14 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="DeveloperId"
-                       class="control-label">
-                    Hospital
+                <label asp-for="DeveloperId" class="control-label">
+                    Developer
                 </label>
 
                 <select asp-for="DeveloperId"
-                        asp-items="ViewBag.Hospitals"
+                        asp-items="ViewBag.Developers"
                         class="form-control">
-
-                    <option value="">
-                        Select a 
-                    </option>
+                    <option value="">Select a developer</option>
                 </select>
 
                 <span asp-validation-for="DeveloperId"
