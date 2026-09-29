@@ -47,7 +47,7 @@ namespace Game_Library.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(DeveloperCreateViewModel create)
         {
-            if (ModelState.IsValid)//Проверява валидацията
+            if (ModelState.IsValid)
             {
                 var dev = new Developer
                 {

@@ -160,6 +160,37 @@ namespace Game_Library.Controllers
             return View(model);
         }
 
-       
+        public async Task<IActionResult> Delete(int id)
+        {
+            var game = await context.Games.FindAsync(id);
+
+            if (game == null)
+            {
+                return NotFound();
+            }
+
+            var model = new GameDeleteViewModel
+            {
+                GameId = id,
+                Title = game.Title,
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var game = await context.Games.FindAsync(id);
+
+            if (game != null)
+            {
+                context.Games.Remove(game);
+                await context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

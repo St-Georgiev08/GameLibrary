@@ -1,0 +1,101 @@
+﻿@model IEnumerable<Game_Library.ViewModels.Game.GameIndexViewModel>
+
+@{
+    ViewData["Title"] = "Game";
+}
+
+<h1>Game</h1>
+
+<p>
+    <a asp-action="Create">Create New Game</a>
+</p>
+
+<div class="table-card">
+    <div class="table-header">
+        <div>
+            <h2>Game Library</h2>
+            <p>Browse and manage the games in your library.</p>
+        </div>
+
+        <a asp-action="Create" class="btn-add">
+            + Add game
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Title)</th>
+                    <th>@Html.DisplayNameFor(model => model.ReleaseYear)</th>
+                    <th>@Html.DisplayNameFor(model => model.Genre)</th>
+                    <th>@Html.DisplayNameFor(model => model.Price)</th>
+                    <th>@Html.DisplayNameFor(model => model.Rating)</th>
+                    <th class="actions-heading">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var game in Model)
+                {
+                    <tr>
+                        <td class="data-title">
+                            @Html.DisplayFor(modelItem => game.Title)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => game.ReleaseYear)
+                        </td>
+
+                        <td>
+                            <span class="info-badge">
+                                @Html.DisplayFor(modelItem => game.Genre)
+                            </span>
+                        </td>
+
+                        <td class="game-price">
+                            @Html.DisplayFor(modelItem => game.Price)
+                        </td>
+
+                        <td>
+                            <span class="rating-badge">
+                                ★ @Html.DisplayFor(modelItem => game.Rating)
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="table-actions">
+                                <a asp-action="Details"
+                                   asp-route-id="@game.GameId"
+                                   class="action-button details-button">
+                                    Details
+                                </a>
+
+                                <a asp-action="Edit"
+                                   asp-route-id="@game.GameId"
+                                   class="action-button edit-button">
+                                    Edit
+                                </a>
+
+                                <a asp-action="Delete"
+                                   asp-route-id="@game.GameId"
+                                   class="action-button delete-button">
+                                    Delete
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="empty-table">
+                            No games have been added yet.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,44 @@
+﻿@model Game_Library.ViewModels.Developer.DeveloperEditViewModel
+
+<h1>Edit a developer</h1>
+
+<form asp-action="Edit" method="post">
+
+    <input asp-for="Id" type="hidden" />
+
+    <label>Name:</label>
+    <input asp-for="DeveloperName" />
+    <span asp-validation-for="DeveloperName"></span>
+
+    <br />
+    <br />
+
+    <label>Country:</label>
+    <input asp-for="Country" />
+    <span asp-validation-for="Country"></span>
+
+    <br />
+    <br />
+
+    <label>Email:</label>
+    <input asp-for="Email" />
+    <span asp-validation-for="Email"></span>
+
+    <br />
+    <br />
+
+    <label>FoundedYear:</label>
+    <input asp-for="FoundedYear" />
+    <span asp-validation-for="FoundedYear"></span>
+
+
+    <br />
+    <br />
+
+    <button type="submit">Save</button>
+
+</form>
+
+<br />
+
+<a asp-action="Index">Go back</a>

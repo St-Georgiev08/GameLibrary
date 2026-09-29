@@ -1,0 +1,45 @@
+﻿@model Game_Library.ViewModels.Developer.DeveloperCreateViewModel
+
+<h1>Add a developer</h1>
+
+<form asp-action="Create" method="post">
+
+    <label>Name of the Developer:</label>
+    <input asp-for="DeveloperName" />
+    <span asp-validation-for="DeveloperName"></span>
+
+    <br />
+    <br />
+
+    <label>Country:</label>
+    <input asp-for="Country" />
+    <span asp-validation-for="Country"></span>
+
+    <br />
+    <br />
+
+    <label>Email:</label>
+    <input asp-for="Email" />
+    <span asp-validation-for="Email"></span>
+
+    <br />
+    <br />
+
+    <label>Founded Year:</label>
+    <input asp-for="FoundedYear" />
+    <span asp-validation-for="FoundedYear"></span>
+
+    <br />
+    <br />
+
+    <button type="submit">Save</button>
+
+</form>
+<a asp-action="Index">Go back</a>
+
+
+
+
+<br />
+
+<a href="/Developer/Index">Show all developers</a>

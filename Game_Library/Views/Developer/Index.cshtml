@@ -1,0 +1,141 @@
+﻿@model IEnumerable<Game_Library.ViewModels.Developer.DeveloperIndexViewModel>
+@{
+    ViewData["Title"] = "Developer";
+}
+
+<h1>Developer</h1>
+
+
+<p>
+    <a asp-action="Create">Create New Developer</a> |
+    <a asp-controller="Game"
+       asp-action="Index">
+        View Game
+    </a>
+</p>
+
+<div class="table-card">
+    <div class="table-header">
+        <div>
+            <h2>Developers</h2>
+            <p>Browse and manage game development companies.</p>
+        </div>
+
+        <a asp-action="Create" class="btn-add">
+            + Add developer
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DeveloperName)
+                    </th>
+
+                    <th>
+                        @Html.DisplayNameFor(model => model.Country)
+                    </th>
+
+                    <th>
+                        @Html.DisplayNameFor(model => model.FoundedYear)
+                    </th>
+
+                    <th>
+                        @Html.DisplayNameFor(model => model.Developer_id)
+                    </th>
+
+                    <th>
+                        @Html.DisplayNameFor(model => model.Email)
+                    </th>
+
+                    <th class="actions-heading">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var developer in Model)
+                {
+                    <tr>
+                        <td class="primary-cell">
+                            @Html.DisplayFor(
+                            modelItem => developer.DeveloperName
+                                                )
+                    </td>
+
+                    <td>
+                        <span class="info-badge">
+                            @Html.DisplayFor(
+                                                        modelItem => developer.Country
+                                                        )
+                        </span>
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(
+                                                modelItem => developer.FoundedYear
+                                                )
+                    </td>
+
+                    <td>
+                        <span class="developer-id">
+                            #@developer.Developer_id
+                        </span>
+                    </td>
+
+                    <td>
+                        @if (!string.IsNullOrWhiteSpace(developer.Email))
+                            {
+                                <a href="mailto:@developer.Email"
+                                   class="email-link">
+                                    @developer.Email
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="empty-value">
+                                    No information
+                                </span>
+                            }
+                        </td>
+
+                        <td>
+                            <div class="table-actions">
+                                <a asp-action="Details"
+                                   asp-route-id="@developer.Developer_id"
+                                   class="action-button details-button">
+                                    Details
+                                </a>
+
+                                <a asp-action="Edit"
+                                   asp-route-id="@developer.Developer_id"
+                                   class="action-button edit-button">
+                                    Edit
+                                </a>
+
+                                <a asp-action="Delete"
+                                   asp-route-id="@developer.Developer_id"
+                                   class="action-button delete-button">
+                                    Delete
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="empty-table">
+                            No developers have been added yet.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

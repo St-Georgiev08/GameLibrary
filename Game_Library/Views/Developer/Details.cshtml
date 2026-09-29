@@ -1,0 +1,48 @@
+﻿@model Game_Library.ViewModels.Developer.DeveloperDetailsViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Hospital</h4>
+    <hr />
+
+    <dl class="row">
+        <dt>
+            @Html.DisplayNameFor(model => model.DeveloperName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.DeveloperName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Country)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Country)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FoundedYear)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FoundedYear)
+        </dd>
+
+    </dl>
+</div>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
