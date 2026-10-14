@@ -91,6 +91,46 @@ namespace GameLibrary_Data.Migrations
                     b.ToTable("Games");
                 });
 
+            modelBuilder.Entity("GameLibrary_Data.Entities.GamePlatform", b =>
+                {
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PlatformId")
+                        .HasColumnType("int");
+
+                    b.HasKey("GameId", "PlatformId");
+
+                    b.HasIndex("PlatformId");
+
+                    b.ToTable("GamePlatforms");
+                });
+
+            modelBuilder.Entity("GameLibrary_Data.Entities.Platform", b =>
+                {
+                    b.Property<int>("PlatformId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PlatformId"));
+
+                    b.Property<string>("Manufacturer")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("ReleaseYear")
+                        .HasColumnType("int");
+
+                    b.HasKey("PlatformId");
+
+                    b.ToTable("Platforms");
+                });
+
             modelBuilder.Entity("GameLibrary_Data.Entities.Game", b =>
                 {
                     b.HasOne("GameLibrary_Data.Entities.Developer", "Developer")
@@ -102,9 +142,38 @@ namespace GameLibrary_Data.Migrations
                     b.Navigation("Developer");
                 });
 
+            modelBuilder.Entity("GameLibrary_Data.Entities.GamePlatform", b =>
+                {
+                    b.HasOne("GameLibrary_Data.Entities.Game", "Game")
+                        .WithMany("GamePlatforms")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GameLibrary_Data.Entities.Platform", "Platform")
+                        .WithMany("GamePlatforms")
+                        .HasForeignKey("PlatformId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Game");
+
+                    b.Navigation("Platform");
+                });
+
             modelBuilder.Entity("GameLibrary_Data.Entities.Developer", b =>
                 {
                     b.Navigation("Games");
+                });
+
+            modelBuilder.Entity("GameLibrary_Data.Entities.Game", b =>
+                {
+                    b.Navigation("GamePlatforms");
+                });
+
+            modelBuilder.Entity("GameLibrary_Data.Entities.Platform", b =>
+                {
+                    b.Navigation("GamePlatforms");
                 });
 #pragma warning restore 612, 618
         }

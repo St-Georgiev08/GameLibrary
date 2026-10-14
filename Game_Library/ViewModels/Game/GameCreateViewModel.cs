@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace Game_Library.ViewModels.Game
 {
@@ -26,5 +27,9 @@ namespace Game_Library.ViewModels.Game
 
         [Required(ErrorMessage = "The developer ID is required!")]
         public int DeveloperId { get; set; }
+
+        public List<int> SelectedPlatformIds { get; set; } = new();
+
+        public List<SelectListItem> AvailablePlatforms { get; set; } = new();
     }
 }

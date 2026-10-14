@@ -1,0 +1,60 @@
+﻿@model Game_Library.ViewModels.Platform.DetailsPlatformViewModel
+
+@{
+    ViewData["Title"] = "Platform Details";
+}
+
+<h2>Platform Details</h2>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h4>@Model.Name</h4>
+
+        <p>
+            <strong>Manufacturer:</strong>
+            @Model.Manufacturer
+        </p>
+
+        <p>
+            <strong>Release Year:</strong>
+            @Model.ReleaseYear
+        </p>
+    </div>
+</div>
+
+<h4>Games on this Platform</h4>
+
+@if (Model.Games.Any())
+{
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Title</th>
+                <th>Release Year</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var game in Model.Games)
+            {
+                <tr>
+                    <td>@game.Title</td>
+                    <td>@game.ReleaseYear</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No games are assigned to this platform.</p>
+}
+
+<a asp-action="Edit"
+   asp-route-id="@Model.PlatformId"
+   class="btn btn-warning">
+    Edit
+</a>
+
+<a asp-action="Index" class="btn btn-secondary">
+    Back
+</a>

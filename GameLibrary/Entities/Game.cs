@@ -39,7 +39,7 @@ namespace GameLibrary_Data.Entities
         public int DeveloperId { get; set; }
         public Developer Developer { get; set; }
 
-        
+        public ICollection<GamePlatform> GamePlatforms { get; set; } = new List<GamePlatform>();
 
     }
 }
