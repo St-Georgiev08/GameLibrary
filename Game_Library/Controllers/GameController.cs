@@ -1,20 +1,19 @@
 ﻿
 using Game_Library.ViewModels.Game;
-using GameLibrary_Data;
+using Game_Library_Core.Interfeces;
 using GameLibrary_Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace Game_Library.Controllers
 {
     public class GameController : Controller
     {
-        private readonly GameLibraryDbContext context;
+        private readonly IGameService gameService;
 
-        public GameController(GameLibraryDbContext context)
+        public GameController(IGameService gameService)
         {
-            this.context = context;
+            this.gameService = gameService;
         }
 
         // ==============================
@@ -24,25 +23,21 @@ namespace Game_Library.Controllers
         private async Task<List<SelectListItem>>
             GetAvailablePlatformsAsync()
         {
-            return await context.Platforms
-                .AsNoTracking()
-                .OrderBy(p => p.Name)
-                .Select(p => new SelectListItem
-                {
-                    Value = p.PlatformId.ToString(),
-                    Text = p.Name
-                })
-                .ToListAsync();
+            var platforms = await gameService
+                .GetAvailablePlatformsAsync();
+
+            return platforms.Select(p => new SelectListItem
+            {
+                Value = p.PlatformId.ToString(),
+                Text = p.Name
+            }).ToList();
         }
 
         private async Task LoadDevelopersAsync(
             int? selectedId = null)
         {
-            var developers = await context.Developers
-                .AsNoTracking()
-                .Where(d => !d.IsDeleted)
-                .OrderBy(d => d.DeveloperName)
-                .ToListAsync();
+            var developers = await gameService
+                .GetAvailableDevelopersAsync();
 
             ViewBag.Developers = new SelectList(
                 developers,
@@ -54,12 +49,10 @@ namespace Game_Library.Controllers
 
         private async Task ValidateRelationshipsAsync(
             int developerId,
-            ICollection<int> selectedPlatformIds)
+            ICollection<int>? selectedPlatformIds)
         {
-            bool developerExists = await context.Developers
-                .AnyAsync(d =>
-                    d.Developer_id == developerId &&
-                    !d.IsDeleted);
+            bool developerExists = await gameService
+                .DeveloperExistsAsync(developerId);
 
             if (!developerExists)
             {
@@ -68,15 +61,10 @@ namespace Game_Library.Controllers
                     "Please select a valid developer.");
             }
 
-            var selectedIds = selectedPlatformIds
-                .Distinct()
-                .ToList();
+            bool platformsValid = await gameService
+                .ArePlatformsValidAsync(selectedPlatformIds);
 
-            int validPlatformCount = await context.Platforms
-                .CountAsync(p =>
-                    selectedIds.Contains(p.PlatformId));
-
-            if (validPlatformCount != selectedIds.Count)
+            if (!platformsValid)
             {
                 ModelState.AddModelError(
                     "SelectedPlatformIds",
@@ -84,15 +72,17 @@ namespace Game_Library.Controllers
             }
         }
 
-
+        // ==============================
+        // INDEX
+        // ==============================
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var model = await context.Games
-                .AsNoTracking()
-                .OrderBy(g => g.Title)
-                .Select(g => new GameIndexViewModel
+            var games = await gameService.GetAllAsync();
+
+            var model = games.Select(g =>
+                new GameIndexViewModel
                 {
                     GameId = g.Game_id,
                     Title = g.Title,
@@ -100,23 +90,19 @@ namespace Game_Library.Controllers
                     Genre = g.Genre,
                     Price = g.Price,
                     Rating = g.Reating
-                })
-                .ToListAsync();
+                }).ToList();
 
             return View(model);
         }
 
-
+        // ==============================
+        // DETAILS
+        // ==============================
 
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            var game = await context.Games
-                .AsNoTracking()
-                .Include(g => g.Developer)
-                .Include(g => g.GamePlatforms)
-                    .ThenInclude(gp => gp.Platform)
-                .FirstOrDefaultAsync(g => g.Game_id == id);
+            var game = await gameService.GetDetailsAsync(id);
 
             if (game == null)
             {
@@ -130,13 +116,17 @@ namespace Game_Library.Controllers
                 ReleaseYear = game.ReleaseYear,
                 Genre = game.Genre,
                 Price = game.Price,
-                Rating = game.Reating
+                Rating = game.Reating,
+                DeveloperName = game.Developer?.DeveloperName ?? "Unknown",
+                Platforms = game.GamePlatforms.Select(gp => gp.Platform.Name).ToList()
             };
 
             return View(model);
         }
 
-
+        // ==============================
+        // CREATE GET
+        // ==============================
 
         [HttpGet]
         public async Task<IActionResult> Create()
@@ -152,7 +142,9 @@ namespace Game_Library.Controllers
             return View(model);
         }
 
-
+        // ==============================
+        // CREATE POST
+        // ==============================
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -175,21 +167,19 @@ namespace Game_Library.Controllers
                     DeveloperId = model.DeveloperId
                 };
 
-                foreach (var platformId in
-                    model.SelectedPlatformIds.Distinct())
+                try
                 {
-                    game.GamePlatforms.Add(
-                        new GamePlatform
-                        {
-                            PlatformId = platformId
-                        });
+                    await gameService.CreateAsync(
+                        game,
+                        model.SelectedPlatformIds);
+
+                    return RedirectToAction(nameof(Index));
                 }
-
-                context.Games.Add(game);
-
-                await context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
+                catch (InvalidOperationException ex)
+                {
+                    ModelState.AddModelError(
+                        string.Empty, ex.Message);
+                }
             }
 
             model.AvailablePlatforms =
@@ -200,15 +190,14 @@ namespace Game_Library.Controllers
             return View(model);
         }
 
-
+        // ==============================
+        // EDIT GET
+        // ==============================
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var game = await context.Games
-                .AsNoTracking()
-                .Include(g => g.GamePlatforms)
-                .FirstOrDefaultAsync(g => g.Game_id == id);
+            var game = await gameService.GetByIdAsync(id);
 
             if (game == null)
             {
@@ -238,6 +227,9 @@ namespace Game_Library.Controllers
             return View(model);
         }
 
+        // ==============================
+        // EDIT POST
+        // ==============================
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -256,57 +248,35 @@ namespace Game_Library.Controllers
 
             if (ModelState.IsValid)
             {
-                var game = await context.Games
-                    .Include(g => g.GamePlatforms)
-                    .FirstOrDefaultAsync(g => g.Game_id == id);
-
-                if (game == null)
+                var game = new Game
                 {
-                    return NotFound();
-                }
+                    Game_id = model.Id,
+                    Title = model.Title,
+                    ReleaseYear = model.ReleaseYear,
+                    Genre = model.Genre,
+                    Price = model.Price,
+                    Reating = model.Rating,
+                    DeveloperId = model.DeveloperId
+                };
 
-                // Update game information
-                game.Title = model.Title;
-                game.ReleaseYear = model.ReleaseYear;
-                game.Genre = model.Genre;
-                game.Price = model.Price;
-                game.Reating = model.Rating;
-                game.DeveloperId = model.DeveloperId;
-
-                // Selected platform IDs
-                var selectedIds = model.SelectedPlatformIds
-                    .Distinct()
-                    .ToHashSet();
-
-                // Remove unchecked platforms
-                var toRemove = game.GamePlatforms
-                    .Where(gp =>
-                        !selectedIds.Contains(gp.PlatformId))
-                    .ToList();
-
-                context.GamePlatforms.RemoveRange(toRemove);
-
-                // Get existing platform IDs
-                var existingIds = game.GamePlatforms
-                    .Select(gp => gp.PlatformId)
-                    .ToHashSet();
-
-                // Add newly selected platforms
-                foreach (var platformId in selectedIds)
+                try
                 {
-                    if (!existingIds.Contains(platformId))
+                    bool updated = await gameService.UpdateAsync(
+                        game,
+                        model.SelectedPlatformIds);
+
+                    if (!updated)
                     {
-                        game.GamePlatforms.Add(
-                            new GamePlatform
-                            {
-                                PlatformId = platformId
-                            });
+                        return NotFound();
                     }
+
+                    return RedirectToAction(nameof(Index));
                 }
-
-                await context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
+                catch (InvalidOperationException ex)
+                {
+                    ModelState.AddModelError(
+                        string.Empty, ex.Message);
+                }
             }
 
             model.AvailablePlatforms =
@@ -317,13 +287,14 @@ namespace Game_Library.Controllers
             return View(model);
         }
 
+        // ==============================
+        // DELETE GET
+        // ==============================
 
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            var game = await context.Games
-                .AsNoTracking()
-                .FirstOrDefaultAsync(g => g.Game_id == id);
+            var game = await gameService.GetByIdAsync(id);
 
             if (game == null)
             {
@@ -339,29 +310,21 @@ namespace Game_Library.Controllers
             return View(model);
         }
 
-
+        // ==============================
+        // DELETE POST
+        // ==============================
 
         [HttpPost]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var game = await context.Games
-                .Include(g => g.GamePlatforms)
-                .FirstOrDefaultAsync(g => g.Game_id == id);
+            bool deleted = await gameService.DeleteAsync(id);
 
-            if (game == null)
+            if (!deleted)
             {
                 return NotFound();
             }
-
-            // Remove junction table records first
-            context.GamePlatforms.RemoveRange(
-                game.GamePlatforms);
-
-            context.Games.Remove(game);
-
-            await context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }

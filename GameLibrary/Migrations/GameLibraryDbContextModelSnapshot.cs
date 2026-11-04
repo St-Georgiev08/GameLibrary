@@ -51,6 +51,26 @@ namespace GameLibrary_Data.Migrations
                     b.HasKey("Developer_id");
 
                     b.ToTable("Developers");
+
+                    b.HasData(
+                        new
+                        {
+                            Developer_id = 1,
+                            Country = "Japan",
+                            DeveloperName = "Nintendo",
+                            Email = "",
+                            FoundedYear = 1889,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Developer_id = 2,
+                            Country = "United States",
+                            DeveloperName = "Valve Corporation",
+                            Email = "",
+                            FoundedYear = 1996,
+                            IsDeleted = false
+                        });
                 });
 
             modelBuilder.Entity("GameLibrary_Data.Entities.Game", b =>
@@ -89,6 +109,28 @@ namespace GameLibrary_Data.Migrations
                     b.HasIndex("DeveloperId");
 
                     b.ToTable("Games");
+
+                    b.HasData(
+                        new
+                        {
+                            Game_id = 1,
+                            DeveloperId = 1,
+                            Genre = "Action-adventure",
+                            Price = 0m,
+                            Reating = 0m,
+                            ReleaseYear = 2017,
+                            Title = "The Legend of Zelda: Breath of the Wild"
+                        },
+                        new
+                        {
+                            Game_id = 2,
+                            DeveloperId = 2,
+                            Genre = "First-person shooter",
+                            Price = 0m,
+                            Reating = 0m,
+                            ReleaseYear = 2020,
+                            Title = "Half-Life: Alyx"
+                        });
                 });
 
             modelBuilder.Entity("GameLibrary_Data.Entities.GamePlatform", b =>
@@ -104,6 +146,18 @@ namespace GameLibrary_Data.Migrations
                     b.HasIndex("PlatformId");
 
                     b.ToTable("GamePlatforms");
+
+                    b.HasData(
+                        new
+                        {
+                            GameId = 1,
+                            PlatformId = 1
+                        },
+                        new
+                        {
+                            GameId = 2,
+                            PlatformId = 2
+                        });
                 });
 
             modelBuilder.Entity("GameLibrary_Data.Entities.Platform", b =>
@@ -129,6 +183,22 @@ namespace GameLibrary_Data.Migrations
                     b.HasKey("PlatformId");
 
                     b.ToTable("Platforms");
+
+                    b.HasData(
+                        new
+                        {
+                            PlatformId = 1,
+                            Manufacturer = "Nintendo",
+                            Name = "Nintendo Switch",
+                            ReleaseYear = 2017
+                        },
+                        new
+                        {
+                            PlatformId = 2,
+                            Manufacturer = "Valve Corporation",
+                            Name = "PC (Valve Index)",
+                            ReleaseYear = 2020
+                        });
                 });
 
             modelBuilder.Entity("GameLibrary_Data.Entities.Game", b =>

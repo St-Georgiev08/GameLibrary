@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GameLibrary\GameLibrary_Data.csproj" />
+    <ProjectReference Include="..\Game_LibraryCore\Game_LibraryCore.csproj" />
   </ItemGroup>
 
 </Project>

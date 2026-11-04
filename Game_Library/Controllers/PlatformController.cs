@@ -1,36 +1,29 @@
-﻿using GameLibrary_Data;
+﻿
+using Game_Library_Core.Interfeces;
 using GameLibrary_Data.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Game_Library.Controllers
 {
     public class PlatformController : Controller
     {
-        private readonly GameLibraryDbContext context;
+        private readonly IPlatformService platformService;
 
-        public PlatformController(GameLibraryDbContext Context)
+        public PlatformController(IPlatformService platformService)
         {
-            this.context = Context;
+            this.platformService = platformService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var platforms = await context.Platforms
-                .AsNoTracking()
-                .OrderBy(p => p.Name)
-                .ToListAsync();
+            var platforms = await platformService.GetAllAsync();
 
             return View(platforms);
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            var platform = await context.Platforms
-                .Include(p => p.GamePlatforms)
-                    .ThenInclude(gp => gp.Game)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(p => p.PlatformId == id);
+            var platform = await platformService.GetDetailsAsync(id);
 
             if (platform == null)
             {
@@ -57,8 +50,7 @@ namespace Game_Library.Controllers
                 return View(platform);
             }
 
-            bool exists = await context.Platforms
-                .AnyAsync(p => p.Name == platform.Name);
+            bool exists = await platformService.ExistsAsync(platform.Name);
 
             if (exists)
             {
@@ -69,8 +61,7 @@ namespace Game_Library.Controllers
                 return View(platform);
             }
 
-            context.Platforms.Add(platform);
-            await context.SaveChangesAsync();
+            await platformService.CreateAsync(platform);
 
             return RedirectToAction(nameof(Index));
         }
@@ -78,7 +69,7 @@ namespace Game_Library.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var platform = await context.Platforms.FindAsync(id);
+            var platform = await platformService.GetByIdAsync(id);
 
             if (platform == null)
             {
@@ -104,16 +95,15 @@ namespace Game_Library.Controllers
                 return View(model);
             }
 
-            var platform = await context.Platforms.FindAsync(id);
+            var platform = await platformService.GetByIdAsync(id);
 
             if (platform == null)
             {
                 return NotFound();
             }
 
-            bool exists = await context.Platforms
-                .AnyAsync(p => p.Name == model.Name
-                            && p.PlatformId != id);
+            bool exists = await platformService.ExistsAsync(
+                model.Name, id);
 
             if (exists)
             {
@@ -124,11 +114,12 @@ namespace Game_Library.Controllers
                 return View(model);
             }
 
-            platform.Name = model.Name;
-            platform.Manufacturer = model.Manufacturer;
-            platform.ReleaseYear = model.ReleaseYear;
+            bool updated = await platformService.UpdateAsync(model);
 
-            await context.SaveChangesAsync();
+            if (!updated)
+            {
+                return NotFound();
+            }
 
             return RedirectToAction(nameof(Index));
         }
@@ -136,9 +127,7 @@ namespace Game_Library.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            var platform = await context.Platforms
-                .AsNoTracking()
-                .FirstOrDefaultAsync(p => p.PlatformId == id);
+            var platform = await platformService.GetByIdAsync(id);
 
             if (platform == null)
             {
@@ -152,15 +141,12 @@ namespace Game_Library.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var platform = await context.Platforms.FindAsync(id);
+            bool deleted = await platformService.DeleteAsync(id);
 
-            if (platform == null)
+            if (!deleted)
             {
                 return NotFound();
             }
-
-            context.Platforms.Remove(platform);
-            await context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }

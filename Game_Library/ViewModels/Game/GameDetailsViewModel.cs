@@ -8,5 +8,8 @@
         public string Genre { get; set; }
         public decimal Price { get; set; }
         public decimal Rating { get; set; }
+        public string DeveloperName { get; set; } = string.Empty;
+
+        public List<string> Platforms { get; set; } = new();
     }
 }

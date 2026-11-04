@@ -1,4 +1,5 @@
-﻿using GameLibrary_Data.Entities;
+﻿using GameLibrary_Data.Config;
+using GameLibrary_Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -35,6 +36,11 @@ namespace GameLibrary_Data
                 .HasOne(gp => gp.Platform)
                 .WithMany(p => p.GamePlatforms)
                 .HasForeignKey(gp => gp.PlatformId);
+
+            modelBuilder.ApplyConfiguration(new DeveloperConfig());
+            modelBuilder.ApplyConfiguration(new GameConfig());
+            modelBuilder.ApplyConfiguration(new GamePlatformConfig());
+            modelBuilder.ApplyConfiguration(new PlatformConfig());
         }
     }
 }

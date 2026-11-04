@@ -8,6 +8,14 @@ namespace Game_Library_Core.Interfeces
 {
     public interface IDeveloper
     {
+        Task<List<Developer>> GetAllAsync();
 
+        Task<Developer?> GetByIdAsync(int id);
+
+        Task CreateAsync(Developer developer);
+
+        Task<bool> UpdateAsync(Developer developer);
+
+        Task<bool> DeleteAsync(int id);
     }
 }
