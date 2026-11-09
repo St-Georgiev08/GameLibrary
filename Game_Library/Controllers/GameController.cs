@@ -20,11 +20,11 @@ namespace Game_Library.Controllers
         // HELPER METHODS
         // ==============================
 
-        private async Task<List<SelectListItem>>
-            GetAvailablePlatformsAsync()
+        private async Task<List<SelectListItem>> GetAvailablePlatformsAsync()
         {
             var platforms = await gameService
                 .GetAvailablePlatformsAsync();
+
 
             return platforms.Select(p => new SelectListItem
             {
@@ -77,9 +77,10 @@ namespace Game_Library.Controllers
         // ==============================
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? price, string? gameSort, string? searchName)
         {
             var games = await gameService.GetAllAsync();
+
 
             var model = games.Select(g =>
                 new GameIndexViewModel
@@ -92,6 +93,11 @@ namespace Game_Library.Controllers
                     Rating = g.Reating
                 }).ToList();
 
+            var game= await gameService.GetAllAsync(price,gameSort,searchName);
+
+            ViewBag.Price = price;
+            ViewBag.GameSort = gameSort;
+            ViewBag.SearchName = searchName;
             return View(model);
         }
 

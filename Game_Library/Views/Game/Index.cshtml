@@ -19,6 +19,68 @@
         </a>
     </div>
 
+
+    <form asp-controller="Hospital" asp-action="Index" method="get">
+        <div class="row mb-3">
+
+            <div class="col-md-4">
+                <label class="form-label">Game name</label>
+
+                <input type="text"
+                       name="searchName"
+                       value="@ViewBag.SearchName"
+                       class="form-control"
+                       placeholder="Search by name..." />
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Min price</label>
+
+                <input type="number"
+                       name="searchMinPrice"
+                       value="@ViewBag.SearchMinPrice"
+                       class="form-control"/>
+            </div>
+
+            <div class="col-md-3">
+                <label class ="form-label">Sort by</label>
+
+                <select name="gameSort" class="form-control">
+                    <option value="name"
+                            selected="@(ViewBag.GameSort == "title_desc")">
+                        Name A-Z
+                    </option>
+
+                    <option value="name_desc"
+                            selected="@(ViewBag.GameSort == "title_desc")">
+                        Name Z-A
+                    </option>
+
+                    <option value="price"
+                            selected="@(ViewBag.GameSort == "price")">
+                        Price Low-High
+                    </option>
+
+                    <option value="price_desc"
+                            selected="@(ViewBag.GameSort == "price_desc")">
+                        Price High-Low
+                    </option>
+                    
+                    <option value="reating_asc"
+                        selected="@(ViewBag.GameSort == "rating_asc")">
+                        Rating Low-High
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    Search
+                </button>
+        </div>
+    </form>
+
+
     <div class="table-responsive">
         <table class="data-table">
             <thead>

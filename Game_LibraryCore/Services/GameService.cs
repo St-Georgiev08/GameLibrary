@@ -19,12 +19,46 @@ namespace GameLibrary_Core.Services
         // GET METHODS
         // ==============================
 
-        public async Task<List<Game>> GetAllAsync()
+        public async Task<List<Game>> GetAllAsync(int? price , string? gameSort , string? searchName)
         {
-            return await context.Games
-                .AsNoTracking()
-                .OrderBy(g => g.Title)
-                .ToListAsync();
+            var games = await context.Games .AsNoTracking() .OrderBy(g => g.Title) .ToListAsync();
+
+            if(!string.IsNullOrEmpty(searchName))
+            {
+                games = games.Where(g => g.Title.Contains(searchName, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            if (price.HasValue)
+            {
+                games = games.Where(g => g.Price <= price.Value).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(gameSort))
+            {
+                switch (gameSort.ToLower())
+                {
+                    case "title_asc":
+                        games = games.OrderBy(g => g.Title).ToList();
+                        break;
+                    case "title_desc":
+                        games = games.OrderByDescending(g => g.Title).ToList();
+                        break;
+                    case "price_asc":
+                        games = games.OrderBy(g => g.Price).ToList();
+                        break;
+                        case "price_desc":
+                            games = games.OrderByDescending(g => g.Price).ToList();
+                        break;
+                        case "reating_asc":
+                            games = games.OrderBy(g => g.Reating).ToList();
+                        break;
+                    default:
+                        games = games.OrderBy(g => g.Title).ToList();
+                        break;
+                }
+            }
+
+            return games;
         }
 
         public async Task<Game?> GetByIdAsync(int id)

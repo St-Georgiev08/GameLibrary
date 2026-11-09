@@ -9,7 +9,7 @@ namespace Game_Library_Core.Interfeces
 {
     public interface IGameService
     {
-        Task<List<Game>> GetAllAsync();
+        Task<List<Game>> GetAllAsync(int? price = null, string? gameSort = null, string? searchName = null);
 
         Task<Game?> GetByIdAsync(int id);
 
