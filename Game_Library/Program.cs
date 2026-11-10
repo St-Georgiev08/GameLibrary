@@ -14,6 +14,7 @@ builder.Services.AddDbContext<GameLibraryDbContext>(options =>
 
 builder.Services.AddScoped<IDeveloperService, DeveloperService>();
 builder.Services.AddScoped<IPlatformService, PlatformService>();
+builder.Services.AddScoped<IGameService, GameService>();
 
 var app = builder.Build();
 
