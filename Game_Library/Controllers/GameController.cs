@@ -79,7 +79,7 @@ namespace Game_Library.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(int? price, string? gameSort, string? searchName)
         {
-            var games = await gameService.GetAllAsync();
+            var games = await gameService.GetAllAsync(price, gameSort, searchName);
 
 
             var model = games.Select(g =>
@@ -93,7 +93,6 @@ namespace Game_Library.Controllers
                     Rating = g.Reating
                 }).ToList();
 
-            var game= await gameService.GetAllAsync(price,gameSort,searchName);
 
             ViewBag.Price = price;
             ViewBag.GameSort = gameSort;
