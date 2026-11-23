@@ -14,6 +14,18 @@ namespace GameLibrary_Data.Config
     {
         public void Configure(EntityTypeBuilder<GamePlatform> builder)
         {
+            builder.HasKey(gp => new { gp.GameId, gp.PlatformId });
+
+            builder.HasOne(x=>x.Game)
+                .WithMany(x=>x.GamePlatforms)
+                .HasForeignKey(x => x.GameId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(x=>x.Platform)
+                .WithMany(x=>x.GamePlatforms)
+                .HasForeignKey(x => x.PlatformId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             builder.HasData(
                 new GamePlatform
                 {

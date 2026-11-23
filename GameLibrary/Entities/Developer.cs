@@ -19,6 +19,7 @@ namespace GameLibrary_Data.Entities
         public int FoundedYear { get; set; }
 
         [EmailAddress]
+        [MaxLength(300)]
         public string? Email {  get; set; }
 
         public bool IsDeleted { get; set; }

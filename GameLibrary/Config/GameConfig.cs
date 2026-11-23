@@ -14,6 +14,28 @@ namespace GameLibrary_Data.Config
     {
         public void Configure(EntityTypeBuilder<Game> builder)
         {
+            builder.HasKey(g => g.Game_id);
+
+            builder.Property(x => x.Title)
+                .HasMaxLength(100)
+                .IsRequired();
+
+            builder.Property(x=>x.ReleaseYear)
+                .IsRequired();
+
+            builder.Property(x => x.Genre)
+                .HasMaxLength(100)
+                .IsRequired();
+
+            builder.Property(x => x.Price)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+            
+            builder.HasOne(x=>x.Developer)
+                .WithMany(x=>x.Games)
+                .HasForeignKey(x => x.DeveloperId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             builder.HasData(
                 new Game
                 {

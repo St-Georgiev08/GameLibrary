@@ -14,6 +14,22 @@ namespace GameLibrary_Data.Config
     {
         public void Configure(EntityTypeBuilder<Developer> builder)
         {
+            builder.HasKey(d => d.Developer_id);
+            builder.Property(d => d.DeveloperName)
+                .HasMaxLength(100)
+                .IsRequired();
+
+            builder.Property(d => d.Country)
+                .HasMaxLength(100)
+                .IsRequired();
+
+            builder.Property(d => d.FoundedYear)
+                .IsRequired();
+
+            builder.Property(d => d.Email)
+                .HasMaxLength(300);
+
+
             builder.HasData(
                 new Developer
                 {
