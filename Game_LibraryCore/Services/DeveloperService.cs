@@ -1,5 +1,4 @@
-﻿
-using Game_Library_Core.Interfeces;
+﻿using Game_Library_Core.Interfeces;
 using GameLibrary_Data;
 using GameLibrary_Data.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -77,6 +76,42 @@ namespace GameLibrary_Core.Services
             await context.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<List<Developer>> GetAllFilteredAsync(string? search, string? country, string? FoundedYear)
+        {
+            var query = context.Games
+                .Include(d => d.Developer)
+                .Where(d => !d.Developer.IsDeleted);
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(x => x.Developer.DeveloperName.Contains(search));
+            }
+
+            if (!string.IsNullOrEmpty(country))
+            {
+                query = query.Where(x => x.Developer.Country.Contains(country));
+            }
+
+            switch (FoundedYear)
+            {
+                case "founded-asc":
+                    query = query.OrderBy(x => x.Developer.FoundedYear);
+                    break;
+                case "founded-desc":
+                    query = query.OrderByDescending(x => x.Developer.FoundedYear);
+                    break;
+                default:
+                    query = query.OrderBy(x => x.Developer.FoundedYear);
+                    break;
+            }
+
+            return await query
+                .Select(x => x.Developer)
+                .Distinct()
+                .AsNoTracking()
+                .ToListAsync();
         }
     }
 }

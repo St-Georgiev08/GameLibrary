@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,6 +10,8 @@ namespace Game_Library_Core.Interfeces
 {
     public interface IDeveloperService
     {
+        Task<List<Developer>> GetAllFilteredAsync(
+            string? search, string? country, string? FoundedYear);
         Task<List<Developer>> GetAllAsync();
 
         Task<Developer?> GetByIdAsync(int id);

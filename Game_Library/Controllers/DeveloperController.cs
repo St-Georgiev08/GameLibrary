@@ -3,6 +3,7 @@ using Game_Library.ViewModels.Developer;
 using Game_Library_Core.Interfeces;
 using GameLibrary_Data.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Game_Library.Controllers
 {
@@ -35,6 +36,22 @@ namespace Game_Library.Controllers
 
             return View(model);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllFilteredAsync(string? search, string? country, string? FoundedYear)
+        {
+            var developers = await developerService.GetAllFilteredAsync(search, country, FoundedYear);
+            var model = developers.Select(d => new DeveloperIndexViewModel
+            {
+                Developer_id = d.Developer_id,
+                DeveloperName = d.DeveloperName,
+                Country = d.Country,
+                Email = d.Email,
+                FoundedYear = d.FoundedYear
+            }).ToList();
+            return Json(model);
+        }
+
 
         public IActionResult Create()
         {
