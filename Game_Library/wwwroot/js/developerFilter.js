@@ -27,8 +27,8 @@
     devs.forEach(function (dev) {
         let row = document.createElement("tr");
 
-        [dev.firstName, dev.lastName,
-        dev.specialty, dev.hospitalName].forEach(function (value) {
+        [dev.developerName, dev.country,
+            dev.email, dev.foundedYear].forEach(function (value) {
             let cell = document.createElement("td");
             cell.textContent = value ?? "";
             row.appendChild(cell);
@@ -43,7 +43,7 @@
             }
 
             let link = document.createElement("a");
-            link.href = "/Doctor/" + action + "/" + doctor.id;
+            link.href = "/Developer/" + action + "/" + dev.id;
             link.textContent = action;
             actions.appendChild(link);
         });
@@ -57,18 +57,18 @@
 document.getElementById("search")
     .addEventListener("input", loadDoctors);
 
-document.getElementById("specialty")
+document.getElementById("country")
     .addEventListener("input", loadDoctors);
 
-document.getElementById("sortOrder")
-    .addEventListener("change", loadDoctors);
+document.getElementById("foundedYear")
+    .addEventListener("input", loadDoctors);
 
 // Изчистване на филтрите
 document.getElementById("clearFilters")
     .addEventListener("click", function () {
         document.getElementById("search").value = "";
-        document.getElementById("specialty").value = "";
-        document.getElementById("sortOrder").value = "name_asc";
+        document.getElementById("country").value = "";
+        document.getElementById("foundedYear").value = "";
 
         loadDoctors();
     }); 

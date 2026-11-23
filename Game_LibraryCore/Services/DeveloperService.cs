@@ -78,7 +78,7 @@ namespace GameLibrary_Core.Services
             return true;
         }
 
-        public async Task<List<Developer>> GetAllFilteredAsync(string? search, string? country, string? FoundedYear)
+        public async Task<List<Developer>> GetAllFilteredAsync(string? search, string? country, string? orderBy)
         {
             var query = context.Games
                 .Include(d => d.Developer)
@@ -94,13 +94,16 @@ namespace GameLibrary_Core.Services
                 query = query.Where(x => x.Developer.Country.Contains(country));
             }
 
-            switch (FoundedYear)
+            switch (orderBy)
             {
-                case "founded-asc":
-                    query = query.OrderBy(x => x.Developer.FoundedYear);
+                case "name-asc":
+                    query = query.OrderBy(x => x.Developer.DeveloperName);
                     break;
-                case "founded-desc":
-                    query = query.OrderByDescending(x => x.Developer.FoundedYear);
+                case "name-desc":
+                    query = query.OrderByDescending(x => x.Developer.DeveloperName);
+                    break;
+                case "foundedYear":
+                    query = query.OrderBy(x => x.Developer.FoundedYear);
                     break;
                 default:
                     query = query.OrderBy(x => x.Developer.FoundedYear);

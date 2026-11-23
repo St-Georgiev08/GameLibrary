@@ -25,6 +25,46 @@
         </a>
     </div>
 
+    <form asp-controller="Developer" asp-action="GetAllFilteredAsync" method="get">
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <label>Developer name</label>
+            <input type="text" id="search"
+                   class="form-control"
+                   placeholder="Serch by name..." />
+        </div>
+
+        <div class="col-md-3">
+            <label>Country</label>
+            <input type="text" id="country"
+                   class="form-control"
+                   placeholder="Serch by country..." />
+        </div>
+
+        <div class="col-md-3">
+            <label>Founded Year</label>
+            <input type="number" id="foundedYear"
+                   class="form-control"
+                   placeholder="Search by founded year..." />
+        </div>
+
+        <div class="col-md-3">
+            <label>Sort by</label>
+            <select id="sortOrder" class="form-control">
+                <option value="name-asc">Name A-Z</option>
+                <option value="name-desc">Name Z-A</option>
+                <option value="foundedYear">Founded Year</option>
+            </select>
+        </div>
+
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="button" id="clearFilters" class="btn btn-primary">
+                ClearFilters
+            </button>
+        </div>
+     </div>
+    </form>
+
     <div class="table-responsive">
         <table class="data-table">
             <thead>
@@ -137,4 +177,9 @@
         </table>
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/js/developerFilter.js"
+            asp-append-version="true"></script>
+}
 
