@@ -12,12 +12,12 @@
 
         <p>
             <strong>Manufacturer:</strong>
-            @Model.Manufacturer
+            @(Model.Manufacturer ?? "Unknown")
         </p>
 
         <p>
             <strong>Release Year:</strong>
-            @Model.ReleaseYear
+            @(Model.ReleaseYear?.ToString() ?? "Unknown")
         </p>
     </div>
 </div>

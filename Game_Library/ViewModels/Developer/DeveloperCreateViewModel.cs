@@ -17,7 +17,7 @@ namespace Game_Library.ViewModels.Developer
         [EmailAddress(ErrorMessage = "Wrong input!")]
         public string? Email { get; set; }
 
-        [Range(1980, 2100, ErrorMessage = "The rating must be between 1980 and 2100!")]
+        [Range(1900, 2100, ErrorMessage = "The rating must be between 1900 and 2100!")]
         public int FoundedYear { get; set; }
     }
 }

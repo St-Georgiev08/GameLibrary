@@ -1,4 +1,5 @@
 ﻿
+using Game_Library.ViewModels.Platform;
 using Game_Library_Core.Interfeces;
 using GameLibrary_Data.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -14,52 +15,82 @@ namespace Game_Library.Controllers
             this.platformService = platformService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var platforms = await platformService.GetAllAsync();
 
-            return View(platforms);
-        }
-
-        public async Task<IActionResult> Details(int id)
-        {
-            var platform = await platformService.GetDetailsAsync(id);
-
-            if (platform == null)
+            var model = platforms.Select(platform => new IndexPlatformViewModel
             {
-                return NotFound();
-            }
+                PlatformId = platform.PlatformId,
+                Name = platform.Name,
+                Manufacturer = platform.Manufacturer,
+                ReleaseYear = platform.ReleaseYear,
+                GamesCount = platform.GamePlatforms.Count
+            }).ToList();
 
-            return View(platform);
+            return View(model);
         }
+
+       [HttpGet]
+public async Task<IActionResult> Details(int id)
+{
+    var platform = await platformService.GetDetailsAsync(id);
+
+    if (platform == null)
+    {
+        return NotFound();
+    }
+
+    var model = new DetailsPlatformViewModel
+    {
+        PlatformId = platform.PlatformId,
+        Name = platform.Name,
+        Manufacturer = platform.Manufacturer,
+        ReleaseYear = platform.ReleaseYear,
+        Games = platform.GamePlatforms
+            .Select(link => new DetailsPlatformViewModel.PlatformGameViewModel
+            {
+                GameId = link.Game.Game_id,
+                Title = link.Game.Title,
+                ReleaseYear = link.Game.ReleaseYear
+            })
+            .ToList()
+    };
+
+    return View(model);
+}
 
         [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            return View(new CreatePlatformViewModel());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Platform platform)
+        public async Task<IActionResult> Create(CreatePlatformViewModel model)
         {
-            ModelState.Remove(nameof(Platform.GamePlatforms));
-
             if (!ModelState.IsValid)
             {
-                return View(platform);
+                return View(model);
             }
 
-            bool exists = await platformService.ExistsAsync(platform.Name);
-
-            if (exists)
+            if (await platformService.ExistsAsync(model.Name))
             {
                 ModelState.AddModelError(
-                    nameof(Platform.Name),
+                    nameof(CreatePlatformViewModel.Name),
                     "A platform with this name already exists.");
 
-                return View(platform);
+                return View(model);
             }
+
+            var platform = new Platform
+            {
+                Name = model.Name,
+                Manufacturer = model.Manufacturer,
+                ReleaseYear = model.ReleaseYear
+            };
 
             await platformService.CreateAsync(platform);
 
@@ -76,19 +107,25 @@ namespace Game_Library.Controllers
                 return NotFound();
             }
 
-            return View(platform);
+            var model = new EditPlatformViewModel
+            {
+                PlatformId = platform.PlatformId,
+                Name = platform.Name,
+                Manufacturer = platform.Manufacturer,
+                ReleaseYear = platform.ReleaseYear
+            };
+
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Platform model)
+        public async Task<IActionResult> Edit(int id, EditPlatformViewModel model)
         {
             if (id != model.PlatformId)
             {
                 return BadRequest();
             }
-
-            ModelState.Remove(nameof(Platform.GamePlatforms));
 
             if (!ModelState.IsValid)
             {
@@ -102,39 +139,50 @@ namespace Game_Library.Controllers
                 return NotFound();
             }
 
-            bool exists = await platformService.ExistsAsync(
-                model.Name, id);
-
-            if (exists)
+            if (await platformService.ExistsAsync(model.Name, id))
             {
                 ModelState.AddModelError(
-                    nameof(Platform.Name),
+                    nameof(EditPlatformViewModel.Name),
                     "A platform with this name already exists.");
 
                 return View(model);
             }
 
-            bool updated = await platformService.UpdateAsync(model);
+            var updatedPlatform = new Platform
+            {
+                PlatformId = id,
+                Name = model.Name,
+                Manufacturer = model.Manufacturer,
+                ReleaseYear = model.ReleaseYear
+            };
 
-            if (!updated)
+            if (!await platformService.UpdateAsync(updatedPlatform))
             {
                 return NotFound();
             }
 
             return RedirectToAction(nameof(Index));
         }
-
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            var platform = await platformService.GetByIdAsync(id);
+            var platform = await platformService.GetDetailsAsync(id);
 
             if (platform == null)
             {
                 return NotFound();
             }
 
-            return View(platform);
+            var model = new DeletePlatformViewModel
+            {
+                PlatformId = platform.PlatformId,
+                Name = platform.Name,
+                Manufacturer = platform.Manufacturer,
+                ReleaseYear = platform.ReleaseYear,
+                GamesCount = platform.GamePlatforms.Count
+            };
+
+            return View(model);
         }
 
         [HttpPost, ActionName("Delete")]

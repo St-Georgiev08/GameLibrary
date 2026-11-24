@@ -60,7 +60,7 @@ namespace GameLibrary_Data.Migrations
                             Country = "Japan",
                             DeveloperName = "Nintendo",
                             Email = "",
-                            FoundedYear = 1889,
+                            FoundedYear = 1900,
                             IsDeleted = false
                         },
                         new
@@ -207,7 +207,7 @@ namespace GameLibrary_Data.Migrations
                     b.HasOne("GameLibrary_Data.Entities.Developer", "Developer")
                         .WithMany("Games")
                         .HasForeignKey("DeveloperId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Developer");

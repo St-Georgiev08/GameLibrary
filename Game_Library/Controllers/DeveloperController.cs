@@ -161,14 +161,27 @@ namespace Game_Library.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var deleted = await developerService.DeleteAsync(id);
+            if (await developerService.DeleteAsync(id))
+            {
+                return RedirectToAction(nameof(Index));
+            }
 
-            if (!deleted)
+            var developer = await developerService.GetByIdAsync(id);
+
+            if (developer == null || developer.IsDeleted)
             {
                 return NotFound();
             }
 
-            return RedirectToAction(nameof(Index));
+            ModelState.AddModelError(
+                string.Empty,
+                "This developer cannot be deleted because one or more games are linked to it.");
+
+            return View("Delete", new DeveloperDeleteViewModel
+            {
+                Id = developer.Developer_id,
+                Name = developer.DeveloperName
+            });
         }
 
         public async Task<IActionResult> Details(int id)

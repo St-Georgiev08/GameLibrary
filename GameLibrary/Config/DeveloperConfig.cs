@@ -36,7 +36,7 @@ namespace GameLibrary_Data.Config
                     Developer_id = 1,
                     DeveloperName = "Nintendo",
                     Country = "Japan",
-                    FoundedYear = 1889,
+                    FoundedYear = 1900,
                     Email = "",
                     IsDeleted = false
                 },

@@ -34,7 +34,7 @@ namespace GameLibrary_Data.Config
             builder.HasOne(x=>x.Developer)
                 .WithMany(x=>x.Games)
                 .HasForeignKey(x => x.DeveloperId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasData(
                 new Game

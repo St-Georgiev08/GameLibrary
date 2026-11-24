@@ -63,16 +63,24 @@ namespace GameLibrary_Core.Services
         public async Task<bool> DeleteAsync(int id)
         {
             var developer = await context.Developers
-                .FirstOrDefaultAsync(d =>
-                    d.Developer_id == id && !d.IsDeleted);
+                .FirstOrDefaultAsync(d => d.Developer_id == id && !d.IsDeleted);
 
             if (developer == null)
             {
                 return false;
             }
 
-            developer.IsDeleted = true;
+            var hasGames = await context.Entry(developer)
+                .Collection(d => d.Games)
+                .Query()
+                .AnyAsync();
 
+            if (hasGames)
+            {
+                return false;
+            }
+
+            developer.IsDeleted = true;
             await context.SaveChangesAsync();
 
             return true;
