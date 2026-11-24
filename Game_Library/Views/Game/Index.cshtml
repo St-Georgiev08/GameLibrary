@@ -90,6 +90,7 @@
                     <th>@Html.DisplayNameFor(model => model.ReleaseYear)</th>
                     <th>@Html.DisplayNameFor(model => model.Genre)</th>
                     <th>@Html.DisplayNameFor(model => model.Price)</th>
+                    <th>@Html.DisplayNameFor(model => model.DeveloperId)</th>
                     <th>@Html.DisplayNameFor(model => model.Rating)</th>
                     <th class="actions-heading">Actions</th>
                 </tr>
@@ -116,6 +117,9 @@
                         <td class="game-price">
                             @Html.DisplayFor(modelItem => game.Price)
                         </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => game.DeveloperId)
 
                         <td>
                             <span class="rating-badge">

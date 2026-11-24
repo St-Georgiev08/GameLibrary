@@ -10,6 +10,7 @@
         public decimal Rating { get; set; }
         public string DeveloperName { get; set; } = string.Empty;
 
+        public string DeveloperId { get; set; }
         public List<string> Platforms { get; set; } = new();
     }
 }

@@ -21,7 +21,7 @@ namespace GameLibrary_Core.Services
 
         public async Task<List<Game>> GetAllAsync(int? price , string? gameSort , string? searchName)
         {
-            var games = await context.Games .AsNoTracking() .OrderBy(g => g.Title) .ToListAsync();
+            var games = await context.Games .AsNoTracking() .Include(x=>x.Developer) .OrderBy(g => g.Title) .ToListAsync();
 
             if(!string.IsNullOrEmpty(searchName))
             {

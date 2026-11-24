@@ -90,6 +90,7 @@ namespace Game_Library.Controllers
                     ReleaseYear = g.ReleaseYear,
                     Genre = g.Genre,
                     Price = g.Price,
+                    DeveloperId = g.Developer.DeveloperName,
                     Rating = g.Reating
                 }).ToList();
 
@@ -123,6 +124,7 @@ namespace Game_Library.Controllers
                 Price = game.Price,
                 Rating = game.Reating,
                 DeveloperName = game.Developer?.DeveloperName ?? "Unknown",
+                DeveloperId = game.Developer.DeveloperName,
                 Platforms = game.GamePlatforms.Select(gp => gp.Platform.Name).ToList()
             };
 

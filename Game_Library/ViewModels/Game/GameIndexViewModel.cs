@@ -7,6 +7,7 @@
         public int ReleaseYear { get; set; }
         public string Genre { get; set; }
         public decimal Price { get; set; }
+        public string DeveloperId { get; set; }
         public decimal Rating { get; set; }
     }
 }
