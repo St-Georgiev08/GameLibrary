@@ -38,18 +38,20 @@ namespace Game_Library.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllFilteredAsync(string? search, string? country, string? FoundedYear)
+        public async Task<IActionResult> GetAllFilteredAsync(
+     string? search, string? country, int? foundedYear, string? sortOrder)
         {
-            var developers = await developerService.GetAllFilteredAsync(search, country, FoundedYear);
-            var model = developers.Select(d => new DeveloperIndexViewModel
+            var developers = await developerService.GetAllFilteredAsync(
+                search, country, foundedYear, sortOrder);
+
+            return Json(developers.Select(d => new
             {
-                Developer_id = d.Developer_id,
-                DeveloperName = d.DeveloperName,
-                Country = d.Country,
-                Email = d.Email,
-                FoundedYear = d.FoundedYear
-            }).ToList();
-            return Json(model);
+                id = d.Developer_id,
+                developerName = d.DeveloperName,
+                country = d.Country,
+                email = d.Email,
+                foundedYear = d.FoundedYear
+            }).ToList());
         }
 
 

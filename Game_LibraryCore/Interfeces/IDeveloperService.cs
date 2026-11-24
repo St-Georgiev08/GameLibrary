@@ -11,7 +11,7 @@ namespace Game_Library_Core.Interfeces
     public interface IDeveloperService
     {
         Task<List<Developer>> GetAllFilteredAsync(
-            string? search, string? country, string? orderBy);
+             string? search, string? country, int? foundedYear, string? sortOrder);
         Task<List<Developer>> GetAllAsync();
 
         Task<Developer?> GetByIdAsync(int id);

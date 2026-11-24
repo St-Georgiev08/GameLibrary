@@ -78,43 +78,39 @@ namespace GameLibrary_Core.Services
             return true;
         }
 
-        public async Task<List<Developer>> GetAllFilteredAsync(string? search, string? country, string? orderBy)
+        public async Task<List<Developer>> GetAllFilteredAsync(
+    string? search, string? country, int? foundedYear, string? sortOrder)
         {
-            var query = context.Games
-                .Include(d => d.Developer)
-                .Where(d => !d.Developer.IsDeleted);
-
-            if (!string.IsNullOrEmpty(search))
-            {
-                query = query.Where(x => x.Developer.DeveloperName.Contains(search));
-            }
-
-            if (!string.IsNullOrEmpty(country))
-            {
-                query = query.Where(x => x.Developer.Country.Contains(country));
-            }
-
-            switch (orderBy)
-            {
-                case "name-asc":
-                    query = query.OrderBy(x => x.Developer.DeveloperName);
-                    break;
-                case "name-desc":
-                    query = query.OrderByDescending(x => x.Developer.DeveloperName);
-                    break;
-                case "foundedYear":
-                    query = query.OrderBy(x => x.Developer.FoundedYear);
-                    break;
-                default:
-                    query = query.OrderBy(x => x.Developer.FoundedYear);
-                    break;
-            }
-
-            return await query
-                .Select(x => x.Developer)
-                .Distinct()
+            var query = context.Developers
                 .AsNoTracking()
-                .ToListAsync();
+                .Where(d => !d.IsDeleted);
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var name = search.Trim();
+                query = query.Where(d => d.DeveloperName.Contains(name));
+            }
+
+            if (!string.IsNullOrWhiteSpace(country))
+            {
+                var countryName = country.Trim();
+                query = query.Where(d => d.Country.Contains(countryName));
+            }
+
+            if (foundedYear.HasValue)
+            {
+                query = query.Where(d => d.FoundedYear == foundedYear.Value);
+            }
+
+            query = sortOrder switch
+            {
+                "name-desc" => query.OrderByDescending(d => d.DeveloperName),
+                "foundedYear" => query.OrderBy(d => d.FoundedYear)
+                                      .ThenBy(d => d.DeveloperName),
+                _ => query.OrderBy(d => d.DeveloperName)
+            };
+
+            return await query.ToListAsync();
         }
     }
 }

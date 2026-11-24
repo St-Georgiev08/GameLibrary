@@ -25,7 +25,10 @@
         </a>
     </div>
 
-    <form asp-controller="Developer" asp-action="GetAllFilteredAsync" method="get">
+    <form id="developerFilters"
+          asp-controller="Developer"
+          asp-action="GetAllFiltered"
+          method="get">
     <div class="row mb-3">
         <div class="col-md-3">
             <label>Developer name</label>
@@ -95,28 +98,22 @@
                 </tr>
             </thead>
 
-            <tbody>
+            <tbody id="devTable">
                 @foreach (var developer in Model)
                 {
                     <tr>
                         <td class="primary-cell">
-                            @Html.DisplayFor(
-                            modelItem => developer.DeveloperName
-                                                )
+                            @Html.DisplayFor(modelItem => developer.DeveloperName)
                     </td>
 
                     <td>
                         <span class="info-badge">
-                            @Html.DisplayFor(
-                                                        modelItem => developer.Country
-                                                        )
+                            @Html.DisplayFor(modelItem => developer.Country)
                         </span>
                     </td>
 
                     <td>
-                        @Html.DisplayFor(
-                                                modelItem => developer.FoundedYear
-                                                )
+                        @Html.DisplayFor(modelItem => developer.FoundedYear)
                     </td>
 
                     <td>
